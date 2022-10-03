@@ -1,7 +1,8 @@
-import { signInWithPopup } from 'firebase/auth'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { useAuth } from '../context/AuthContext'
+
+
 const FlexContainer = styled.div`
 height: 100vh;
 width: 100%;
@@ -50,6 +51,14 @@ border: none;
 background-color: transparent;
 `
 
+const Error = styled.div`
+    color: red;
+    border: 1px solid red;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    padding: 10px;
+`
+
 function Login(){
 
     const {login, signup} = useAuth()
@@ -57,7 +66,7 @@ function Login(){
     const [hasAcc, setHasAcc] = useState(true)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-
+    const [errorMessage, setErrorMessage] = useState(null)
 
     function handleAuthChange(){
         setHasAcc(prevHasAcc => !prevHasAcc)
@@ -73,7 +82,7 @@ function Login(){
 
     async function Submit(e){
         if (email === "" || password === ""){
-            alert("type email and password")
+            setErrorMessage("Please type email and password")
         }else{
 
             if(hasAcc){
@@ -82,7 +91,7 @@ function Login(){
                     return await login(email,password)
                 }
                 catch(err){
-                    alert("Incorrect email or password")
+                    setErrorMessage("Incorrect email or password")
                 }
             }else{
                 await signup(email, password)
@@ -95,8 +104,19 @@ function Login(){
         <FlexContainer>
 
         <h1>Flash Cards</h1>
-        <EmailInput placeholder="Email" type="email" value={email} onChange={handleChange}  />
-        <PasswordInput placeholder="Password" type="password" value={password} onChange={handleChange} />
+        {errorMessage && <Error>{errorMessage}</Error>}
+        <EmailInput 
+        placeholder="Email" 
+        type="email" 
+        value={email} 
+        onChange={handleChange}/>
+
+        <PasswordInput 
+        placeholder="Password" 
+        type="password" 
+        value={password} 
+        onChange={handleChange}/>
+
         {hasAcc ?
         <Button onClick={Submit}>Login</Button> 
         : 
@@ -104,7 +124,10 @@ function Login(){
         }
         
         
-        <ChangeAuthButton onClick={handleAuthChange}>{hasAcc ? "Sign In" : "Log In"}</ChangeAuthButton>
+        <ChangeAuthButton 
+        onClick={handleAuthChange}>
+            {hasAcc ? "Sign In" : "Log In"}
+        </ChangeAuthButton>
         
      </FlexContainer>
 

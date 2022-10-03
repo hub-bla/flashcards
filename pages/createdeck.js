@@ -1,7 +1,13 @@
 import { nanoid } from "nanoid"
 import { useState, useRef, useEffect } from "react"
+import { useAuth } from "../context/AuthContext"
+import {doc, setDoc} from 'firebase/firestore'
+import { db } from "../firebase"
 
 export default function createDeck(){
+
+    const {currentUser} = useAuth()
+
     const [inputs, setInputs] = useState({
         titleOfDeck: "Deck Title"
     })
@@ -90,6 +96,8 @@ export default function createDeck(){
         })
     }
 
+
+
     function changeDisability(){
         setIsDisabled(false)
         
@@ -107,6 +115,16 @@ export default function createDeck(){
         setIsDisabled(true)
     }
 
+
+
+
+    async function handleSave(){
+        const userRef = doc(db, 'users', currentUser.uid)
+        await setDoc(userRef, {
+            [inputs.titleOfDeck]: inputs
+        }, {merge:true})
+    }
+
     function disableWithEnter(e){
         if(e.key === "Enter"){
             titleRef.current.blur()
@@ -114,6 +132,7 @@ export default function createDeck(){
     }
 
     return (
+        currentUser ? 
         <div>
             <input 
             type="text" 
@@ -142,8 +161,11 @@ export default function createDeck(){
             onFocus={addTerm}
             >
                 + Add term
-                </button>
+            </button>
+
+            <button onClick={handleSave}>Save deck</button>
             
-        </div>
+        </div> :
+        <div>You need to be logged in</div>
     )
 }
