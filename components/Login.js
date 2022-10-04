@@ -44,6 +44,7 @@ transition: opacity 0.15s;
   opacity: 0.7;
 }
 `
+export {Button}
 
 const ChangeAuthButton = styled.button`
 cursor: pointer;
@@ -81,20 +82,21 @@ function Login(){
     
 
     async function Submit(e){
-        if (email === "" || password === ""){
-            setErrorMessage("Please type email and password")
-        }else{
-
-            if(hasAcc){
-                try{
-
-                    return await login(email,password)
-                }
-                catch(err){
-                    setErrorMessage("Incorrect email or password")
-                }
+        if(e.target.tagName === "BUTTON" || e.key === "Enter"){
+            if (email === "" || password === ""){
+                setErrorMessage("Please type email and password")
             }else{
-                await signup(email, password)
+    
+                if(hasAcc){
+                    try{
+                        return await login(email,password)
+                    }
+                    catch(err){
+                        setErrorMessage("Incorrect email or password")
+                    }
+                }else{
+                    await signup(email, password)
+                }
             }
         }
 
@@ -109,13 +111,17 @@ function Login(){
         placeholder="Email" 
         type="email" 
         value={email} 
-        onChange={handleChange}/>
+        onChange={handleChange}
+        onKeyUp={Submit}
+        />
 
         <PasswordInput 
         placeholder="Password" 
         type="password" 
         value={password} 
-        onChange={handleChange}/>
+        onChange={handleChange}
+        onKeyUp={Submit}
+        />
 
         {hasAcc ?
         <Button onClick={Submit}>Login</Button> 

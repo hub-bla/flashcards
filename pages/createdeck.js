@@ -3,6 +3,43 @@ import { useState, useRef, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import {doc, setDoc} from 'firebase/firestore'
 import { db } from "../firebase"
+import styled from "styled-components"
+import Router, { useRouter } from "next/router"
+
+const Terms = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    align-items: center;
+    justify-content: center;
+    padding-top: 50px;
+`
+
+
+
+const TitleOfDeck = styled.input`
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    &:focus{
+        border-bottom: 2px solid #fff;
+    }
+
+    &:disabled{
+        color: #fff;
+    }
+`
+
+
+const TitleControl = styled.div`
+    margin-bottom: 30px;
+`
+
+const TermsControl = styled.div`
+    display: flex;
+    gap: 20px;
+`
 
 export default function createDeck(){
 
@@ -13,8 +50,11 @@ export default function createDeck(){
     })
     const [terms, setTerms] = useState([])
     const [isDisabled, setIsDisabled] = useState(true)
+    const [isSaved, setIsSaved] = useState(false)
     const titleRef = useRef(null)
 
+
+    const router = useRouter()
 
     function handleChange(event){
         const {id, value, name} = event.target
@@ -73,7 +113,7 @@ export default function createDeck(){
             const id = nanoid()
             return [
                 ...prevTerms,
-                <div className="term-container" id={id}>
+                <div className="term-container" id={id} key={id}>
                     <input 
                         type="text" 
                         id={id}
@@ -121,9 +161,16 @@ export default function createDeck(){
     async function handleSave(){
         const userRef = doc(db, 'users', currentUser.uid)
         await setDoc(userRef, {
-            [inputs.titleOfDeck]: inputs
+            [nanoid()]: inputs
         }, {merge:true})
+        setIsSaved(true)
     }
+
+    useEffect(() => {
+        if(isSaved) setTimeout(() =>{
+            router.push("/")
+        }, 1000)
+    }, [isSaved])
 
     function disableWithEnter(e){
         if(e.key === "Enter"){
@@ -133,39 +180,49 @@ export default function createDeck(){
 
     return (
         currentUser ? 
-        <div>
-            <input 
-            type="text" 
-            value={inputs.titleOfDeck}
-            name="titleOfDeck" 
-            id="titleOfDeck" 
-            onChange={handleChange}
-            ref={titleRef}
-            disabled={isDisabled}
-            onBlur={disable}
-            onKeyUp={disableWithEnter}
-            />
+        <Terms>
+            <TitleControl>
+                <TitleOfDeck 
+                type="text" 
+                value={inputs.titleOfDeck}
+                name="titleOfDeck" 
+                id="titleOfDeck" 
+                onChange={handleChange}
+                ref={titleRef}
+                disabled={isDisabled}
+                onBlur={disable}
+                onKeyUp={disableWithEnter}
+                />
+                
+                {isDisabled && 
+                <button
+                onClick={changeDisability}>
+                    Edit
+                </button>}
+            </TitleControl>
             
-            {isDisabled && 
-            <button
-            onClick={changeDisability}>
-                Edit
-            </button>}
-
-            <h2>Terms in deck</h2>
-
-            {terms}
-
-            <button 
-            onClick={addTerm}
-            onFocus={addTerm}
-            >
-                + Add term
-            </button>
-
-            <button onClick={handleSave}>Save deck</button>
             
-        </div> :
+                <h2>Terms in deck</h2>
+
+                {terms}
+            
+            <TermsControl>
+
+                <button 
+                onClick={addTerm}>
+                    + Add term
+                </button>
+
+                <button 
+                onClick={handleSave}
+                disabled={isSaved}>
+                    Save deck
+                </button>
+                
+            </TermsControl>
+        
+        </Terms> :
         <div>You need to be logged in</div>
+        
     )
 }
