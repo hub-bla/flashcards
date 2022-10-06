@@ -1,51 +1,42 @@
 
-import { useAuth } from "../context/AuthContext"
-
-import styled from "styled-components"
-
-import useInputs from "../hooks/useInputs"
 
 const Terms = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    align-items: center;
-    justify-content: center;
-    padding-top: 50px;
+display: flex;
+flex-direction: column;
+width: 100vw;
+align-items: center;
+justify-content: center;
+padding-top: 50px;
 `
 
 
 
 const TitleOfDeck = styled.input`
-    background-color: transparent;
-    border: none;
-    outline: none;
-    font-size: 20px;
-    &:focus{
-        border-bottom: 2px solid #fff;
-    }
+background-color: transparent;
+border: none;
+outline: none;
+font-size: 20px;
+&:focus{
+    border-bottom: 2px solid #fff;
+}
 
-    &:disabled{
-        color: #fff;
-    }
+&:disabled{
+    color: #fff;
+}
 `
 
 
 const TitleControl = styled.div`
-    margin-bottom: 30px;
+margin-bottom: 30px;
 `
 
 const TermsControl = styled.div`
-    display: flex;
-    gap: 20px;
+display: flex;
+gap: 20px;
 `
 
-export default function createDeck(){
-
+export default function Terms(){
     const {currentUser} = useAuth()
-
-    const {handleChange, handleSave, disableWithEnter, disable, addTerm, terms, isDisabled, titleRef, saveRef, inputs, changeDisability} = useInputs()
-    
     return (
         currentUser ? 
         <Terms>
