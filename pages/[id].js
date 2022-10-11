@@ -1,20 +1,30 @@
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import { useAuth } from "../context/AuthContext"
 import useFetchDecks from '../hooks/FetchDecks'
-import { nanoid } from "nanoid"
+import { db } from "../firebase"
 import useInputs from "../hooks/useInputs"
 import styled from "styled-components"
-
+import { doc, updateDoc, deleteField} from "firebase/firestore"
+import EditIcon from "../public/pencil.svg"
+import Practise from "../components/Practise"
+import Image from "next/image"
 const Terms = styled.div`
 display: flex;
 flex-direction: column;
-width: 100vw;
+width: 100%;
 align-items: center;
 justify-content: center;
-padding-top: 50px;
+padding: 20px;
+
 `
 
-
+const FlexContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+`
 
 const TitleOfDeck = styled.input`
 background-color: transparent;
@@ -40,10 +50,38 @@ display: flex;
 gap: 20px;
 `
 
+const Options = styled.div`
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 20px;
+    justify-content: flex-end; 
+`
+
+const EditButton = styled.button`
+    border: none;
+    padding: 0;
+
+    &:hover{
+        background-color: transparent;
+    }
+
+    &:focus{
+        outline:none;
+    }
+`
+
 function Deck(){
+    const {currentUser} = useAuth()
+    const [secondLoading, setSecondLoading] = useState(true)
+
     const {loading, decks, error} = useFetchDecks()
     const {handleChange, handleSave, disableWithEnter, disable, addTerm, terms, isDisabled, titleRef, saveRef, inputs, changeDisability, loadTerms, setInputs} = useInputs()
-    
+
+   
+
+    const [practise, setPractise] = useState(false)
+
     const router = useRouter()
     const  id = router.query.id
 
@@ -51,24 +89,27 @@ function Deck(){
     // {inputs, setInputs, handleChange} = useInputs()
     useEffect( () => {
         if (!loading){
-            Object.keys(decks).map(key =>{
-                
-                if(key === id) {
-                    if (inputs == decks[id]){
-                        loadTerms(decks[id])
-                    }else{
-                        setInputs(decks[id])
-                    }
-                    
+            if(secondLoading){
 
-                        
+                Object.keys(decks).map(key =>{
                     
-                }
-            })
+                    if(key === id) {
+    
+                        setInputs(decks[id])
+                        setSecondLoading(false)
+       
+                        
+                    }
+                })
+            }else{
+
+                loadTerms(inputs)
+            }
+            
         
         }
 
-    }, [loading, inputs])
+    }, [loading, secondLoading])
 
     // console.log(data)
     // const currentDeckData = Object.keys(data[id]).map(key => {
@@ -85,15 +126,45 @@ function Deck(){
     //         )
     //     }
     // })
-   
+
+    async function deleteDeck(){
+        const userRef = doc(db, 'users', currentUser.uid)
+        await updateDoc(userRef, {[id]: deleteField()})
+        .then(() => {
+            console.log("Code Field has been deleted successfully");
+            router.push("/") 
+        })
+       
+            
+    }
+
+   useEffect(() => {
+    if(!isDisabled){
+        titleRef.current.focus()
+    }
+   }, [isDisabled])
     
     return (
-        
+        !practise ? 
         <Terms>
+            <Options>
+                <button
+                onClick={() => {
+                    setPractise(true)
+                }}>
+                    Practise
+                </button>
+                <button
+                onClick={deleteDeck}>
+                    Delete Deck
+                </button>
+
+
+            </Options>
             <TitleControl>
                 <TitleOfDeck 
                 type="text" 
-                value={inputs.titleOfDeck}
+                value={inputs["titleOfDeck"]}
                 name="titleOfDeck" 
                 id="titleOfDeck" 
                 onChange={handleChange}
@@ -104,34 +175,39 @@ function Deck(){
                 />
                 
                 {isDisabled && 
-                <button
+                <EditButton
                 onClick={changeDisability}>
-                    Edit
-                </button>}
+                    <Image src={EditIcon} onClick={changeDisability} />
+                </EditButton>}
             </TitleControl>
             
             
                 <h2>Terms in deck</h2>
-
-                {terms}
+                <FlexContainer>
+                    {terms}
+                </FlexContainer>
             
             <TermsControl>
 
                 <button 
                 onClick={addTerm}>
-                    + Add term
+                    + Add Term
                 </button>
 
                 <button 
                 onClick={() => handleSave(id)}
                 ref={saveRef}
                 >
-                    Save deck
+                    Save Deck
                 </button>
-                
             </TermsControl>
-        
         </Terms>
+            :
+        <Practise
+            inputs={inputs}
+
+         />
+        
         
     )
 }

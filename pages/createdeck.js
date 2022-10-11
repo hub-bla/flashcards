@@ -1,6 +1,6 @@
 
 import { useAuth } from "../context/AuthContext"
-
+import { useEffect } from "react"
 import styled from "styled-components"
 
 import useInputs from "../hooks/useInputs"
@@ -46,6 +46,13 @@ export default function createDeck(){
 
     const {handleChange, handleSave, disableWithEnter, disable, addTerm, terms, isDisabled, titleRef, saveRef, inputs, changeDisability} = useInputs()
     
+    useEffect(() => {
+        if(!isDisabled){
+            titleRef.current.focus()
+        }
+       }, [isDisabled])
+        
+
     return (
         currentUser ? 
         <Terms>

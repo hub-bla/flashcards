@@ -3,12 +3,13 @@ import { useEffect, useState } from "react"
 import useFetchDecks from "../hooks/FetchDecks"
 import Logout from "./Logout"
 import styled from "styled-components"
-import { Button } from "./Login"
-import { nanoid } from "nanoid"
 
+import { nanoid } from "nanoid"
+import Image from "next/image"
+import EditIcon from '../public/pencil.svg'
 
 const Deck = styled.div`
-    border: 1px solid #fff;
+    border: 2px solid #fff;
     border-radius: 2px;
     max-width: 700px;
     min-width: 300px;
@@ -16,12 +17,16 @@ const Deck = styled.div`
     margin: 20px;
     font-size: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 `
 const Decks = styled.div`
     width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
+    
 `
 
 const OptionPanel = styled.div`
@@ -65,11 +70,12 @@ export default function UserDashboard(){
 
     const decksData = sortedData.map(deck => {
         return (
-            <Link href={`/${deck}`} key={nanoid()}>
-                <Deck>
+            
+                <Link href={`/${deck}`} key={nanoid()}>
+                    <Deck>
                     {data[deck].titleOfDeck}
-                </Deck>
-            </Link>
+                    </Deck>
+                </Link>
         )
     })
 

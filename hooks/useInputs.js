@@ -1,9 +1,54 @@
 import { nanoid } from "nanoid"
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
-import {doc, setDoc} from 'firebase/firestore'
+import {doc, setDoc, updateDoc} from 'firebase/firestore'
 import { db } from "../firebase"
 import { useRouter } from "next/router"
+import styled from "styled-components"
+import Image from 'next/image'
+import TrashIcon from "../public/trash.svg"
+
+const TermDiv = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    background-color: #418358;
+    padding: 20px 10px;
+    border-radius: 10px;
+`
+
+const Input = styled.input`
+
+    
+    border-radius: 5px;
+    
+    height: 25px;
+    padding: 10px 5px;
+    `
+    const Options = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    
+    `
+    
+const FlexContainer = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+`
+
+const Button = styled.button`
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    &:hover{
+        background-color: transparent;
+    }
+`
 export default function useInputs(){
     const {currentUser} = useAuth()
 
@@ -51,7 +96,7 @@ export default function useInputs(){
 
     function deleteTerm(event){
         const {id} = event.target
-        
+        console.log(event.target)
         setTerms(prevTerms =>{
             return prevTerms.map(term => {
                 console.log(terms)
@@ -79,25 +124,34 @@ export default function useInputs(){
             
             return [
                 ...prevTerms,
-                <div className="term-container" id={id} key={id}>
-                    <input 
-                        type="text" 
-                        id={id}
-                        name="term"
-                        value={(inputs[id]?.term)} 
-                        onChange={handleChange}
-                    />
-                    <input 
+                <TermDiv className="term-container" id={id} key={id}>
+                <Options>
+
+                    <Button id={id} onClick={deleteTerm}>
+                        <Image id={id} src={TrashIcon} onClick={deleteTerm}/>
+                    </Button>
+                </Options>
+                <FlexContainer>
+                Term
+                <Input 
+                    type="text" 
+                    id={id}
+                    name="term"
+                    defaultValue="" 
+                    onChange={handleChange}
+                />
+                </FlexContainer>
+                <FlexContainer>
+                    Definition
+                    <Input
                         type="text" 
                         id={id}
                         name="definition"
-                        value={(inputs[id]?.definition)} 
+                        defaultValue=""
                         onChange={handleChange}
                     />
-                    <button id={id} onClick={deleteTerm}>
-                        Delete Term
-                    </button>
-                </div>
+                </FlexContainer>
+            </TermDiv>
             ]
         })
     }
@@ -107,27 +161,36 @@ export default function useInputs(){
         
         setTerms(Object.keys(inputs).map(id =>{
             if(id !== "titleOfDeck"){
-                
                 return(
-                    <div className="term-container" id={id} key={id}>
-                        <input 
+                    <TermDiv className="term-container" id={id} key={id}>
+                        <Options>
+
+                            <Button id={id} onClick={deleteTerm}>
+                                <Image id={id} src={TrashIcon} onClick={deleteTerm}/>
+                            </Button>
+                        </Options>
+                        <FlexContainer>
+                        Term
+                        <Input 
+                            
                             type="text" 
                             id={id}
                             name="term"
-                            value={inputs[id].term} 
+                            defaultValue={inputs[id].term} 
                             onChange={handleChange}
                         />
-                        <input 
-                            type="text" 
-                            id={id}
-                            name="definition"
-                            value={inputs[id].definition} 
-                            onChange={handleChange}
-                        />
-                        <button id={id} onClick={deleteTerm}>
-                            Delete Term
-                        </button>
-                    </div>
+                        </FlexContainer>
+                        <FlexContainer>
+                            Definition
+                            <Input
+                                type="text" 
+                                id={id}
+                                name="definition"
+                                defaultValue={inputs[id].definition} 
+                                onChange={handleChange}
+                            />
+                        </FlexContainer>
+                    </TermDiv>
                 
                 )
             }
@@ -147,9 +210,7 @@ export default function useInputs(){
         const userRef = doc(db, 'users', currentUser.uid)
         
         if(typeof id === "string"){
-            await setDoc(userRef, {
-                [id]: inputs
-            }, {merge:true})
+            await updateDoc(userRef, { [id] : {...inputs}})
         }else{
             await setDoc(userRef, {
                 [nanoid()]: inputs
@@ -160,8 +221,9 @@ export default function useInputs(){
 
     function changeDisability(){
         setIsDisabled(false)
-        
     }
+
+
 
     function disableWithEnter(e){
         if(e.key === "Enter"){
@@ -170,6 +232,6 @@ export default function useInputs(){
     }
     
     
-
+    console.log(inputs)
     return{handleChange, handleSave, disableWithEnter, disable, addTerm, terms, isDisabled, titleRef, saveRef, inputs, changeDisability, loadTerms, inputs, setInputs}
 }
