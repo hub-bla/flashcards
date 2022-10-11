@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 
@@ -27,7 +28,6 @@ const SubmitAnswer  = styled.button`
 
 export default function Practise(props){
     const [count, setCount] = useState(0)
-    const [incorrectCount, setIncorrectCount] = useState(0)
     const[data, setData] = useState(props.inputs)
     
     const [term, setTerm] = useState('')
@@ -35,6 +35,9 @@ export default function Practise(props){
     const [end, setEnd] = useState(false)
     const [userAnswer, setUserAnswer] = useState('')
     const [incorrectAnswers, setIncorrectAnswers] = useState({})
+
+
+
     useEffect(() =>{
         setData(prevData =>{
             delete prevData.titleOfDeck
@@ -107,11 +110,16 @@ export default function Practise(props){
         setUserAnswer(value)
     }
 
+
+
     return (
         <Question>
             {
                 end ?
-                <h1>Well done!</h1>
+                <>
+                    <h1>Well done!</h1>
+                    <Link href="/"><a>Back to decks</a></Link>
+                </>
                 :
                 <>
                     <h1>{term}</h1>
