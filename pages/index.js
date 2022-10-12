@@ -14,9 +14,10 @@ export default function Home() {
   // const [decks, setDecks] = useState()
   const {currentUser} = useAuth()
 
-  console.log(currentUser)
+
   return (
     <>
+   
       {!currentUser && <Login />}
       {currentUser && <UserDashboard />}
     </>

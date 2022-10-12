@@ -47,7 +47,7 @@ const TermDiv = styled.div`
     margin-bottom: 20px;
 `
 
-export default function createDeck(){
+export default function CreateDeck(){
 
     const {currentUser} = useAuth()
 

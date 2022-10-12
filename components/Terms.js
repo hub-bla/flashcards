@@ -1,6 +1,6 @@
 
 
-const Terms = styled.div`
+const TermsDiv = styled.div`
 display: flex;
 flex-direction: column;
 width: 100vw;
@@ -39,7 +39,7 @@ export default function Terms(){
     const {currentUser} = useAuth()
     return (
         currentUser ? 
-        <Terms>
+        <TermsDiv>
             <TitleControl>
                 <TitleOfDeck 
                 type="text" 
@@ -81,7 +81,7 @@ export default function Terms(){
                 
             </TermsControl>
         
-        </Terms> :
+        </TermsDiv> :
         <div>You need to be logged in</div>
         
     )
