@@ -40,6 +40,13 @@ const TermsControl = styled.div`
     gap: 20px;
 `
 
+const TermDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+`
+
 export default function createDeck(){
 
     const {currentUser} = useAuth()
@@ -76,10 +83,13 @@ export default function createDeck(){
                 </button>}
             </TitleControl>
             
-            
+            <TermDiv>
+
                 <h2>Terms in deck</h2>
 
                 {terms}
+            
+            </TermDiv>
             
             <TermsControl>
 

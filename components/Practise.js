@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import useWindowSize from 'react-use/lib/useWindowSize'
+import Confetti from 'react-confetti'
 
 const Question = styled.div`
     width: 100%;
@@ -36,6 +38,7 @@ export default function Practise(props){
     const [userAnswer, setUserAnswer] = useState('')
     const [incorrectAnswers, setIncorrectAnswers] = useState({})
 
+    const { width, height } = useWindowSize()
 
 
     useEffect(() =>{
@@ -117,6 +120,11 @@ export default function Practise(props){
             {
                 end ?
                 <>
+                    <Confetti
+                        width={width}
+                        height={height}
+                        recycle={false}
+                        />
                     <h1>Well done!</h1>
                     <Link href="/"><a>Back to decks</a></Link>
                 </>
