@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import useFetchDecks from '../hooks/FetchDecks'
-import { db } from "../firebase"
+import { db } from "../firebaseLogin"
 import useInputs from "../hooks/useInputs"
 import styled from "styled-components"
 import { doc, updateDoc, deleteField} from "firebase/firestore"
@@ -179,7 +179,7 @@ function Deck(){
                 {isDisabled && 
                 <EditButton
                 onClick={changeDisability}>
-                    <Image src={EditIcon} onClick={changeDisability} />
+                    <Image src={EditIcon} onClick={changeDisability} alt=''/>
                 </EditButton>}
             </TitleControl>
             

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import {doc, getDoc} from 'firebase/firestore'
-import { db } from "../firebase"
+import { db } from "../firebaseLogin"
 import { useAuth } from "../context/AuthContext"
 
 export default function useFetchDecks(){

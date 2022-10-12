@@ -2,7 +2,7 @@ import { nanoid } from "nanoid"
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import {doc, setDoc, updateDoc} from 'firebase/firestore'
-import { db } from "../firebase"
+import { db } from "../firebaseLogin"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Image from 'next/image'
@@ -128,7 +128,7 @@ export default function useInputs(){
                 <Options>
 
                     <Button id={id} onClick={deleteTerm}>
-                        <Image id={id} src={TrashIcon} onClick={deleteTerm}/>
+                        <Image id={id} src={TrashIcon} onClick={deleteTerm} alt=''/>
                     </Button>
                 </Options>
                 <FlexContainer>
@@ -166,7 +166,7 @@ export default function useInputs(){
                         <Options>
 
                             <Button id={id} onClick={deleteTerm}>
-                                <Image id={id} src={TrashIcon} onClick={deleteTerm}/>
+                                <Image id={id} src={TrashIcon} onClick={deleteTerm} alt=''/>
                             </Button>
                         </Options>
                         <FlexContainer>
