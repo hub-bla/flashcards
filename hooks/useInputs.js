@@ -1,51 +1,11 @@
 import { nanoid } from "nanoid"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { useAuth } from "../context/AuthContext"
 import { doc, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "../firebaseLogin"
 import { useRouter } from "next/router"
-import styled from "styled-components"
-import Image from "next/image"
-import TrashIcon from "../public/trash.svg"
+import Term from "../components/Term"
 
-const TermDiv = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	justify-content: center;
-	background-color: #418358;
-	padding: 20px 10px;
-	border-radius: 10px;
-`
-
-const Input = styled.input`
-	border-radius: 5px;
-
-	height: 25px;
-	padding: 10px 5px;
-`
-const Options = styled.div`
-	width: 100%;
-	display: flex;
-	justify-content: flex-end;
-`
-
-const FlexContainer = styled.div`
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-`
-
-const Button = styled.button`
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
-	padding: 0;
-	&:hover {
-		background-color: transparent;
-	}
-`
 export default function useInputs() {
 	const { currentUser } = useAuth()
 
@@ -114,33 +74,12 @@ export default function useInputs() {
 		setTerms((prevTerms) => {
 			return [
 				...prevTerms,
-				<TermDiv className='term-container' id={id} key={id}>
-					<Options>
-						<Button id={id} onClick={deleteTerm}>
-							<Image id={id} src={TrashIcon} onClick={deleteTerm} alt='' />
-						</Button>
-					</Options>
-					<FlexContainer>
-						Term
-						<Input
-							type='text'
-							id={id}
-							name='term'
-							defaultValue=''
-							onChange={handleChange}
-						/>
-					</FlexContainer>
-					<FlexContainer>
-						Definition
-						<Input
-							type='text'
-							id={id}
-							name='definition'
-							defaultValue=''
-							onChange={handleChange}
-						/>
-					</FlexContainer>
-				</TermDiv>,
+				<Term
+					deleteTerm={deleteTerm}
+					id={id}
+					handleChange={handleChange}
+					defValue=''
+				/>,
 			]
 		})
 	}
@@ -150,33 +89,14 @@ export default function useInputs() {
 			Object.keys(inputs).map((id) => {
 				if (id !== "titleOfDeck") {
 					return (
-						<TermDiv className='term-container' id={id} key={id}>
-							<Options>
-								<Button id={id} onClick={deleteTerm}>
-									<Image id={id} src={TrashIcon} onClick={deleteTerm} alt='' />
-								</Button>
-							</Options>
-							<FlexContainer>
-								Term
-								<Input
-									type='text'
-									id={id}
-									name='term'
-									defaultValue={inputs[id].term}
-									onChange={handleChange}
-								/>
-							</FlexContainer>
-							<FlexContainer>
-								Definition
-								<Input
-									type='text'
-									id={id}
-									name='definition'
-									defaultValue={inputs[id].definition}
-									onChange={handleChange}
-								/>
-							</FlexContainer>
-						</TermDiv>
+						<Term
+							deleteTerm={deleteTerm}
+							id={id}
+							handleChange={handleChange}
+							defValue=''
+							term={inputs[id]["term"]}
+							definition={inputs[id]["definition"]}
+						/>
 					)
 				}
 			})
