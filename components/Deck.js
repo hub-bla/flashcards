@@ -1,4 +1,3 @@
-import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import useFetchDecks from "../hooks/FetchDecks"
@@ -7,8 +6,9 @@ import useInputs from "../hooks/useInputs"
 import styled from "styled-components"
 import { doc, updateDoc, deleteField } from "firebase/firestore"
 import EditIcon from "../public/pencil.svg"
-import Practise from "../components/Practise"
 import Image from "next/image"
+
+
 const Terms = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -77,7 +77,7 @@ const NotLoggedIn = styled.div`
 	align-items: center;
 `
 
-function Deck({creator, practise}) {
+function Deck({creator, practise, id}) {
 	const { currentUser } = useAuth()
 	const [secondLoading, setSecondLoading] = useState(true)
 
@@ -99,8 +99,7 @@ function Deck({creator, practise}) {
 	} = useInputs()
 
 
-	const router = useRouter()
-	const id = router.query.id
+	
 
 	useEffect(() => {
 		if (!loading && !creator) {
