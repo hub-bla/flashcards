@@ -9,7 +9,6 @@ import { doc, updateDoc, deleteField } from "firebase/firestore"
 import EditIcon from "../public/pencil.svg"
 import Practise from "../components/Practise"
 import Image from "next/image"
-import Deck from "../components/Deck"
 const Terms = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -70,7 +69,15 @@ const EditButton = styled.button`
 	}
 `
 
-function DeckSite() {
+const NotLoggedIn = styled.div`
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`
+
+function Deck({creator, practise}) {
 	const { currentUser } = useAuth()
 	const [secondLoading, setSecondLoading] = useState(true)
 
@@ -91,20 +98,12 @@ function DeckSite() {
 		setInputs,
 	} = useInputs()
 
-	const [practise, setPractise] = useState(false)
 
 	const router = useRouter()
 	const id = router.query.id
 
-	function practiseMode(){
-		setPractise(true)
-	}
-
-	//make useInputs hook
-	// {inputs, setInputs, handleChange} = useInputs()
 	useEffect(() => {
-		if (!loading) {
-			console.log(currentUser)
+		if (!loading && !creator) {
 			if (secondLoading && currentUser) {
 				Object.keys(decks).map((key) => {
 					if (key === id) {
@@ -121,7 +120,6 @@ function DeckSite() {
 	async function deleteDeck() {
 		const userRef = doc(db, "users", currentUser.uid)
 		await updateDoc(userRef, { [id]: deleteField() }).then(() => {
-			console.log("Code Field has been deleted successfully")
 			router.push("/")
 		})
 	}
@@ -132,11 +130,54 @@ function DeckSite() {
 		}
 	}, [isDisabled])
 
-	return !practise ? (
-		<Deck creator={false} practise={practiseMode}/>
+	return currentUser ? (
+        !error ? (
+
+            <Terms>
+                {creator ? '' :
+                <Options>
+                    <button
+                        onClick={practise}>
+                        Practise
+                    </button>
+                    <button onClick={deleteDeck}>Delete Deck</button>
+                </Options>}
+                <TitleControl>
+                    <TitleOfDeck
+                        type='text'
+                        value={inputs["titleOfDeck"]}
+                        name='titleOfDeck'
+                        id='titleOfDeck'
+                        onChange={handleChange}
+                        ref={titleRef}
+                        disabled={isDisabled}
+                        onBlur={disable}
+                        onKeyUp={disableWithEnter}
+                    />
+    
+                    {isDisabled && (
+                        <EditButton onClick={changeDisability}>
+                            <Image src={EditIcon} onClick={changeDisability} alt='' />
+                        </EditButton>
+                    )}
+                </TitleControl>
+    
+                <h2>Terms in deck</h2>
+                <FlexContainer>{terms}</FlexContainer>
+    
+                <TermsControl>
+                    <button onClick={addTerm}>+ Add Term</button>
+    
+                    <button onClick={() => handleSave(id)} ref={saveRef}>
+                        Save Deck
+                    </button>
+                </TermsControl>
+            </Terms>
+        ):
+        {error}
 	) : (
-		<Practise inputs={inputs} />
-	)
+        <NotLoggedIn>You need to be logged in</NotLoggedIn>
+    )
 }
 
-export default DeckSite
+export default Deck

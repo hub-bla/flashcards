@@ -18,6 +18,7 @@ const LoginInputs = styled.input`
 	border: 1px solid #fff;
 	border-radius: 4px;
 	padding: 5px 10px;
+	
 `
 
 const EmailInput = styled(LoginInputs)`
@@ -25,7 +26,7 @@ const EmailInput = styled(LoginInputs)`
 `
 
 const PasswordInput = styled(LoginInputs)`
-margin-bottom: 20px;s
+margin-bottom: 20px;
 `
 
 const Button = styled.button`

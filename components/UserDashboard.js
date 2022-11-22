@@ -11,8 +11,7 @@ import EditIcon from "../public/pencil.svg"
 const Deck = styled.div`
 	border: 2px solid #fff;
 	border-radius: 2px;
-	max-width: 700px;
-	min-width: 300px;
+	width: 300px;
 	padding: 15px;
 	margin: 20px;
 	font-size: 20px;
@@ -60,8 +59,6 @@ export default function UserDashboard() {
 			}
 			return 0
 		})
-
-		console.log(sortedData)
 
 		const decksData = sortedData.map((deck) => {
 			return (
