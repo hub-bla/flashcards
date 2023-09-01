@@ -3,7 +3,9 @@ import { useEffect, useState } from "react"
 import styled from "styled-components"
 import useWindowSize from "react-use/lib/useWindowSize"
 import Confetti from "react-confetti"
-
+import CorrectAnswer from "./CorrectAnswer"
+import Checkmark from "../public/checkmark.svg"
+import Image from "next/image"
 const Question = styled.div`
 	width: 100%;
 	height: 100vh;
@@ -22,6 +24,7 @@ const AnswerDiv = styled.div`
 const UserAnswer = styled.input`
 	height: 100%;
 	flex: 3;
+	padding 10px 5px;
 `
 
 const SubmitAnswer = styled.button`
@@ -40,6 +43,11 @@ export default function Practise(props) {
 
 	const { width, height } = useWindowSize()
 
+	const [checkMark, setCheckMark] = useState(false)
+	const [isWrong, setIsWrong] = useState(false)
+
+	const [lastDef, setLastDef] = useState("")
+	const [lastTerm, setLastTerm] = useState("")
 	useEffect(() => {
 		setData((prevData) => {
 			delete prevData.titleOfDeck
@@ -65,6 +73,23 @@ export default function Practise(props) {
 		}
 	}, [count, data, incorrectAnswers])
 
+	function showAnswer() {
+		setIsWrong(true)
+		setLastDef(definition)
+		setLastTerm(term)
+	}
+
+	function hideAnswer() {
+		setIsWrong(false)
+	}
+
+	function showCheckMark() {
+		setCheckMark(true)
+		setTimeout(() => {
+			setCheckMark(false)
+		}, 1000)
+	}
+
 	function nextTerm() {
 		const keys = Object.keys(data)
 		const incorrectKeys = Object.keys(incorrectAnswers)
@@ -84,6 +109,7 @@ export default function Practise(props) {
 		}
 
 		if (userAnswer !== definition) {
+			showAnswer()
 			if (keys[0])
 				setIncorrectAnswers((prevIncorrectAnswers) => ({
 					...prevIncorrectAnswers,
@@ -102,6 +128,7 @@ export default function Practise(props) {
 				}))
 			}
 		} else {
+			showCheckMark()
 			setCount((prevCount) => prevCount + 1)
 		}
 	}
@@ -126,20 +153,30 @@ export default function Practise(props) {
 						<a>Back to decks</a>
 					</Link>
 				</>
+			) : !isWrong ? (
+				checkMark ? (
+					<Image src={Checkmark} />
+				) : (
+					<>
+						<h1>{term}</h1>
+						<AnswerDiv>
+							<UserAnswer
+								onKeyUp={nextTermKey}
+								onChange={handleUserAnswer}
+								value={userAnswer}
+							/>
+							<SubmitAnswer id='answer' onClick={nextTerm}>
+								Answer
+							</SubmitAnswer>
+						</AnswerDiv>
+					</>
+				)
 			) : (
-				<>
-					<h1>{term}</h1>
-					<AnswerDiv>
-						<UserAnswer
-							onKeyUp={nextTermKey}
-							onChange={handleUserAnswer}
-							value={userAnswer}
-						/>
-						<SubmitAnswer id='answer' onClick={nextTerm}>
-							Answer
-						</SubmitAnswer>
-					</AnswerDiv>
-				</>
+				<CorrectAnswer
+					definition={lastDef}
+					term={lastTerm}
+					nextTerm={hideAnswer}
+				/>
 			)}
 		</Question>
 	)

@@ -10,7 +10,6 @@ import UserDashboard from "../components/UserDashboard"
 import favicon from "../public/flashcard.svg"
 
 export default function Home() {
-	// const [decks, setDecks] = useState()
 	const { currentUser } = useAuth()
 
 	return (

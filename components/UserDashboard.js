@@ -21,7 +21,7 @@ const Deck = styled.div`
 	justify-content: space-between;
 `
 const Decks = styled.div`
-	width: 100vw;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -29,7 +29,7 @@ const Decks = styled.div`
 
 const OptionPanel = styled.div`
 	box-sizing: border-box;
-	width: 100vw;
+	width: 100%;
 	display: flex;
 	justify-content: flex-end;
 	gap: 15px;
